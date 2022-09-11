@@ -84,9 +84,9 @@
           try {
             const apiType  = this.location.match(/[A-Za-z]+/g) ? `city=${this.location}`: `city""=&zip=${this.location}`
             const weatherData = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}WeatherForecast/weather?${apiType}`);
-            const {wind, main} = weatherData.data;
+            const {wind, main, name} = weatherData.data;
             const weeklyData =  await axios.get(`${process.env.VUE_APP_API_ENDPOINT}WeatherForecast/forecast?${apiType}`);
-            this.searchLocation = this.location;
+            this.searchLocation = name;
             this.location = '';
           
             this.weatherData = main;
