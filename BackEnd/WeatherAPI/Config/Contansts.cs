@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace WeatherAPI.Config
 {
-    public class Constants
+    public static class Constants
     {
-        public string OPEN_WEATHER_APPID = "";
+        public const string OPEN_WEATHER_APPID = "";
     }
 }

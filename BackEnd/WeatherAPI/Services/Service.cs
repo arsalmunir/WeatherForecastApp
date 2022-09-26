@@ -1,39 +1,43 @@
-﻿using RestSharp;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 using System.Text.Json;
+using System.Xml.Linq;
 using WeatherAPI.Models.OpenWeatherMapModels;
 using WeatherAPI.ExceptionHandling;
 using WeatherAPI.Models.ForecastWeatherModels;
-
+using System.Collections.Generic;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Newtonsoft.Json.Linq;
 
 
 namespace WeatherAPI.Services
 {
     public class Service : IService
     {
-        private static readonly string weatherApiKey = Environment.GetEnvironmentVariable("WEATHER_API_KEY");
         private static readonly int kelvin = -273;
         private readonly ILogger<Service> _logger;
         private readonly RestClient _client;
+        private readonly string weatherUri = "weather?";
+        private readonly string forecastUri = "forecast?";
 
         public Service(ILogger<Service> logger)
         {
-            if(weatherApiKey == null)
-            {
-                //throw a graceful exception which should exit the application
-            }
             _logger = logger;
-            _client = new RestClient("https://api.openweathermap.org/");
+            _client = new RestClient(Environment.GetEnvironmentVariable("openweathermap.api.base_url"));
         }
 
         public WeatherResponse GetWeather(string? city = "", string? zip = "")
         {
-            var response = _client.ExecuteGet(buildRequest("data/2.5/weather?", city, zip));
+            var response = _client.ExecuteGet(buildRequest(weatherUri, city, zip));
             if (response.IsSuccessful)
             {
                 var weatherResponse = JsonSerializer.Deserialize<WeatherResponse>(response.Content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 weatherResponse.Main.Temp = Math.Round((weatherResponse.Main.Temp + kelvin), 0, MidpointRounding.ToEven);
                 weatherResponse.Main.Temp_Min = Math.Round(weatherResponse.Main.Temp_Min + kelvin, 0, MidpointRounding.ToEven);
                 weatherResponse.Main.Temp_Max = Math.Round(weatherResponse.Main.Temp_Max + kelvin, 0, MidpointRounding.ToEven);
+
+
                 return weatherResponse;
             }
             else
@@ -45,11 +49,11 @@ namespace WeatherAPI.Services
 
         public IDictionary<string, AverageForecastResponse> GetForecast(string? city = "", string? zip = "")
         {
-            var response = _client.ExecuteGet(buildRequest("data/2.5/forecast?", city, zip));
+            var response = _client.ExecuteGet(buildRequest(forecastUri, city, zip));
             if (response.IsSuccessful)
             {
                 var weatherDetails = JsonSerializer.Deserialize<ForecastResponse>(response.Content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                IDictionary<string, AverageForecastResponse>  a = averageForecast(weatherDetails.list);
+                IDictionary<string, AverageForecastResponse> a = averageForecast(weatherDetails.list);
                 _logger.LogInformation("count: {}", a.Count());
                 return a;
             }
@@ -61,24 +65,24 @@ namespace WeatherAPI.Services
 
         }
 
-        private RestRequest buildRequest(string? baseUri = "", string? city = "", string? zip = "") {
+        private RestRequest buildRequest(string? uri = "", string? city = "", string? zip = "") {
 
+            RestRequest request = new RestRequest(uri);
             if (city != "")
             {
-                baseUri += $"q={city}";
+                request.AddQueryParameter("q", city);
             }
             else if (zip != "")
             {
-                baseUri += $"zip={zip}" + ",de";
+                request.AddQueryParameter("zip", String.Format("{0},de", zip));
             }
             else
             {
                 _logger.LogTrace("Neither city nor zip query parameter is provided");
                 throw new HttpResponseException((400), "{\"cod\":\"400\",\"message\":\"Either city or zip query parameter must be provided\"}");
             }
-
-            baseUri += $"&appid={weatherApiKey}";
-            return new RestRequest(baseUri);
+            request.AddQueryParameter("appid", Environment.GetEnvironmentVariable("openweathermap.api.api_key"));
+            return request;
         }
 
 
