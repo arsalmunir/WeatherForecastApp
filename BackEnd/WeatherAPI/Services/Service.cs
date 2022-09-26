@@ -1,26 +1,26 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using RestSharp;
+﻿using RestSharp;
 using System.Text.Json;
-using System.Xml.Linq;
 using WeatherAPI.Models.OpenWeatherMapModels;
 using WeatherAPI.ExceptionHandling;
 using WeatherAPI.Models.ForecastWeatherModels;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Newtonsoft.Json.Linq;
+
 
 
 namespace WeatherAPI.Services
 {
     public class Service : IService
     {
+        private static readonly string weatherApiKey = Environment.GetEnvironmentVariable("WEATHER_API_KEY");
         private static readonly int kelvin = -273;
         private readonly ILogger<Service> _logger;
         private readonly RestClient _client;
 
         public Service(ILogger<Service> logger)
         {
+            if(weatherApiKey == null)
+            {
+                //throw a graceful exception which should exit the application
+            }
             _logger = logger;
             _client = new RestClient("https://api.openweathermap.org/");
         }
@@ -77,7 +77,7 @@ namespace WeatherAPI.Services
                 throw new HttpResponseException((400), "{\"cod\":\"400\",\"message\":\"Either city or zip query parameter must be provided\"}");
             }
 
-            baseUri += $"&appid={Config.Constants.OPEN_WEATHER_APPID}";
+            baseUri += $"&appid={weatherApiKey}";
             return new RestRequest(baseUri);
         }
 

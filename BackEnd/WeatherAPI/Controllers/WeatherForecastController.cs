@@ -1,11 +1,5 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
-using RestSharp;
-using WeatherAPI.Models;
-using WeatherAPI.ExceptionHandling;
+﻿using Microsoft.AspNetCore.Mvc;
 using WeatherAPI.Models.OpenWeatherMapModels;
-using WeatherAPI.Config;
-using System.Net;
 using WeatherAPI.Models.ForecastWeatherModels;
 using WeatherAPI.Services;
 

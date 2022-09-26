@@ -23,7 +23,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:7007;http://localhost:5044",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "WEATHER_API_KEY": "c4662f2967a7841536c39da7a54baf90"
       }
     }
   }

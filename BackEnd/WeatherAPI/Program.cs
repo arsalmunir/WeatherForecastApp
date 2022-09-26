@@ -38,7 +38,7 @@ builder.Services.AddControllers(options =>
 //    options.HttpsPort = 5001;
 //});
 
-builder.Services.AddScoped<IService, Service>();
+builder.Services.AddSingleton<IService, Service>();
 
 var app = builder.Build();
 
