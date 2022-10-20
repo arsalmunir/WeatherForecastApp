@@ -23,7 +23,9 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:7007;http://localhost:5044",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "openweathermap.api.base_url": "https://api.openweathermap.org/data/2.5/",
+        "openweathermap.api.api_key": "c4662f2967a7841536c39da7a54baf90"
       }
     }
   }

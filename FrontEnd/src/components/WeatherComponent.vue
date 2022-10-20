@@ -71,24 +71,31 @@
         isLoading: false
       }
     },
+
+    props:{
+        session: String
+    },
+
     mounted(){
       this.date =  new Date().toISOString().split("T")[0]
       this.search();
     },
     methods: {
         async search() {
+          console.log(this.session);
           this.isLoading = true;
           this.hasError = false;
           this.errorMessage = ''
           
           try {
-            const apiType  = this.location.match(/[A-Za-z]+/g) ? `city=${this.location}`: `city""=&zip=${this.location}`
-            const weatherData = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}WeatherForecast/weather?${apiType}`);
+            const apiType  = this.location.match(/[A-Za-z]+/g) ? `city=${this.location}`: `zip=${this.location}`
+            const weatherData = await axios.get(`${process.env.VUE_APP_API_ENDPOINT}WeatherForecast/weather?${apiType}&sessionID=${this.session}`);
             const {wind, main, name} = weatherData.data;
-            const weeklyData =  await axios.get(`${process.env.VUE_APP_API_ENDPOINT}WeatherForecast/forecast?${apiType}`);
+            const weeklyData =  await axios.get(`${process.env.VUE_APP_API_ENDPOINT}WeatherForecast/forecast?${apiType}&sessionID=${this.session}`);
             this.searchLocation = name;
             this.location = '';
-          
+
+      
             this.weatherData = main;
             this.windspeed = wind.speed;
             this.weeklyData = weeklyData.data;

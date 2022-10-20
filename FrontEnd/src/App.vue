@@ -1,15 +1,15 @@
 <template>
-  <WeatherComponent/>
+  <LoginComponent/>
 </template>
 
 <script>
 
-import WeatherComponent from './components/WeatherComponent.vue'
+import LoginComponent from './components/LoginComponent.vue'
 
 export default {
   name: 'App',
   components: {
-    WeatherComponent
+    LoginComponent
   }
 }
 </script>

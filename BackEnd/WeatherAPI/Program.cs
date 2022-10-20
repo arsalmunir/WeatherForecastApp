@@ -38,6 +38,7 @@ builder.Services.AddControllers(options =>
 //    options.HttpsPort = 5001;
 //});
 
+builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IService, Service>();
 
 var app = builder.Build();
@@ -65,4 +66,3 @@ app.UseCors(builder => builder
      .AllowAnyHeader());
 
 app.Run();
-
